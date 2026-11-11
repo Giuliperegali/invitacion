@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Invitación</title>
+  <meta name="theme-color" content="#16201a" />
+  <!-- Vista previa al compartir por WhatsApp -->
+  <meta property="og:title" content="Cumple Giuli" />
+  <meta property="og:description" content="Abrí el link para verla" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://agusmarmol.github.io/Invitacion-Cumplea-os/" />
+  <meta property="og:image" content="https://agusmarmol.github.io/Invitacion-Cumplea-os/assets/portada.jpg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- 1. PANTALLA INICIAL: "Tocá para abrir" -->
+  <section id="intro" class="pantalla activa">
+    <div class="intro-fondo" aria-hidden="true"></div>
+    <div class="intro-contenido">
+      <div class="sobre" aria-hidden="true">
+        <div class="sobre-solapa"></div>
+        <div class="sobre-cuerpo"></div>
+        <div class="sobre-sello">✦</div>
+      </div>
+      <h1 id="intro-titulo"></h1>
+      <p id="intro-subtitulo" class="intro-sub"></p>
+      <button id="btn-abrir" class="btn-slide">
+        <span class="slide-icono">▶</span>
+        <span class="slide-texto"></span>
+        <span class="slide-flechas">›››</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- 2. VIDEO A PANTALLA COMPLETA -->
+  <section id="pantalla-video" class="pantalla">
+    <div class="video-fondo" id="video-fondo" aria-hidden="true"></div>
+    <video id="video" playsinline webkit-playsinline preload="auto"></video>
+    <div id="video-cargando" class="cargando oculto"><span></span></div>
+    <button id="btn-saltar" class="btn-saltar">Saltar ›</button>
+    <div class="barra-progreso"><div id="progreso"></div></div>
+  </section>
+
+  <!-- 3. INVITACIÓN + FORMULARIO -->
+  <section id="invitacion" class="pantalla">
+    <main class="tarjeta">
+      <header class="encabezado">
+        <span id="ev-nombre" class="chip"></span>
+        <h2 id="ev-titulo" class="ev-titulo"></h2>
+        <p id="ev-descripcion" class="ev-descripcion"></p>
+      </header>
+
+      <!-- Cuenta regresiva, estilo "tarjeta de estadísticas" -->
+      <div id="cuenta-regresiva" class="cuenta oculto">
+        <div class="cuenta-header">
+          <span>⏳ Falta poco</span>
+          <div class="barras" id="barras" aria-hidden="true"></div>
+        </div>
+        <div class="cuenta-grid">
+          <div><b id="cr-dias">0</b><span>Días</span></div>
+          <div><b id="cr-horas">0</b><span>Horas</span></div>
+          <div><b id="cr-min">0</b><span>Min</span></div>
+          <div><b id="cr-seg">0</b><span>Seg</span></div>
+        </div>
+      </div>
+
+      <div class="datos">
+        <div class="dato dato-verde">
+          <span class="dato-label">Fecha</span>
+          <span id="ev-fecha" class="dato-valor"></span>
+        </div>
+        <div class="dato dato-oscuro">
+          <span class="dato-label">Hora</span>
+          <span id="ev-hora" class="dato-valor"></span>
+        </div>
+        <a id="ev-mapa" class="dato dato-claro dato-ancho" target="_blank" rel="noopener">
+          <div>
+            <span class="dato-label">Lugar</span>
+            <span id="ev-lugar" class="dato-valor"></span>
+            <span id="ev-direccion" class="dato-sub"></span>
+          </div>
+          <span class="circulo circulo-oscuro">↗</span>
+        </a>
+        <div id="ev-dress-wrap" class="dato dato-oscuro dato-ancho oculto">
+          <span class="dato-label">Dress code</span>
+          <span id="ev-dress" class="dato-valor"></span>
+        </div>
+        <div id="ev-invitados-wrap" class="dato dato-verde dato-ancho dato-aviso oculto">
+          <span class="circulo circulo-oscuro">🕧</span>
+          <div>
+            <span class="dato-label">Invitados</span>
+            <span id="ev-invitados" class="dato-valor"></span>
+          </div>
+        </div>
+        <div id="ev-notas-wrap" class="dato dato-oscuro dato-ancho oculto">
+          <span class="dato-label">Importante</span>
+          <span id="ev-notas" class="dato-valor"></span>
+        </div>
+      </div>
+
+      <div class="acciones-calendario">
+        <a id="btn-gcal" class="btn-pastilla" target="_blank" rel="noopener">
+          <span class="circulo circulo-verde">📅</span>
+          <span class="pastilla-texto"><b>Agendar</b><small>Google Calendar</small></span>
+          <span class="circulo circulo-oscuro">→</span>
+        </a>
+        <a id="btn-ics" class="btn-pastilla">
+          <span class="circulo circulo-verde">🍎</span>
+          <span class="pastilla-texto"><b>Agendar</b><small>iPhone / Outlook</small></span>
+          <span class="circulo circulo-oscuro">→</span>
+        </a>
+      </div>
+
+      <!-- Formulario -->
+      <form id="form" class="form" novalidate>
+        <h3>Confirmá tu asistencia</h3>
+        <p id="fecha-limite" class="form-aviso oculto"></p>
+
+        <label class="campo">
+          <span>Nombre y apellido</span>
+          <input type="text" name="nombre" id="f-nombre" autocomplete="name" required maxlength="80" />
+        </label>
+
+        <div class="campo">
+          <span>¿Venís?</span>
+          <div class="opciones">
+            <label class="opcion"><input type="radio" name="asiste" value="Sí" required /><span>¡Sí, voy!</span></label>
+            <label class="opcion"><input type="radio" name="asiste" value="No" /><span>No puedo</span></label>
+          </div>
+        </div>
+
+        <div id="campo-acomp" class="campo oculto">
+          <span>¿Cuántos acompañantes traés?</span>
+          <div class="contador">
+            <button type="button" class="circulo circulo-borde" id="acomp-menos" aria-label="Menos">−</button>
+            <div class="contador-valor"><b id="acomp-num">0</b><small id="acomp-label">Voy solo/a</small></div>
+            <button type="button" class="circulo circulo-borde" id="acomp-mas" aria-label="Más">+</button>
+          </div>
+          <input type="hidden" name="acompanantes" id="f-acomp" value="0" />
+          <p id="aviso-acomp" class="aviso-acomp oculto"></p>
+        </div>
+
+        <label id="campo-mensaje" class="campo oculto">
+          <span>Dejame un mensaje <small>(opcional)</small></span>
+          <textarea name="mensaje" id="f-mensaje" rows="3" maxlength="500"></textarea>
+        </label>
+
+        <p id="form-error" class="form-error oculto"></p>
+        <button type="submit" id="btn-enviar" class="btn-slide btn-ancho">
+          <span class="slide-icono">✓</span>
+          <span class="slide-texto">Confirmar</span>
+          <span class="slide-flechas">›››</span>
+        </button>
+      </form>
+
+      <div id="gracias" class="gracias oculto">
+        <div class="gracias-icono">✓</div>
+        <p id="gracias-texto"></p>
+        <button id="btn-cambiar" class="link-btn">Cambiar mi respuesta</button>
+      </div>
+
+      <footer class="pie">
+        <button id="btn-ver-video" class="link-btn">▶ Ver el video de nuevo</button>
+      </footer>
+    </main>
+  </section>
+
+  <script src="config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
