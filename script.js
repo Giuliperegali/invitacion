@@ -47,7 +47,16 @@
   // Hay que arrastrar el círculo hasta el final. Si solo se toca, el botón "rebota" para mostrar que se desliza.
   function hacerDeslizable(btn, alCompletar) {
     const pulgar = btn.querySelector(".slide-icono");
-    let inicioX = null, dx = 0, max = 0, movido = false;
+    let inicioX = null, dx = 0, max = 0, movido = false, esperandoTouchend = null;
+
+    // En iPhone, el sonido solo se habilita dentro del evento "touchend" (cuando se levanta el dedo),
+    // así que con el dedo completamos ahí; con mouse, en pointerup.
+    const completar = () => {
+      clearTimeout(esperandoTouchend);
+      esperandoTouchend = null;
+      alCompletar();
+    };
+    btn.addEventListener("touchend", () => { if (esperandoTouchend) completar(); });
 
     const pintar = (x, animar) => {
       pulgar.style.transition = animar ? "transform 0.3s ease" : "none";
@@ -76,7 +85,12 @@
       if (e.type === "pointerup" && dx >= max * 0.85) {
         pintar(max, true);
         btn.classList.add("completo");
-        alCompletar(); // se llama dentro del gesto, así el video puede sonar
+        if (e.pointerType === "mouse" || e.pointerType === "pen") {
+          completar();
+        } else {
+          // Esperamos el touchend; si por algún motivo no llega, completamos igual
+          esperandoTouchend = setTimeout(completar, 350);
+        }
       } else {
         pintar(0, true);
         if (!movido) { btn.classList.remove("rebote"); void btn.offsetWidth; btn.classList.add("rebote"); }
@@ -119,8 +133,10 @@
     const p = video.play();
     if (p && p.catch) {
       p.catch(() => {
-        // Si no se puede reproducir con sonido, intentamos sin sonido
+        // Si el celular no deja reproducir con sonido, arranca en silencio
+        // y aparece un botón para activar el sonido con un toque
         video.muted = true;
+        $("btn-sonido").classList.remove("oculto");
         video.play().catch(terminarVideo);
       });
     }
@@ -131,6 +147,7 @@
 
   function terminarVideo() {
     video.pause();
+    $("btn-sonido").classList.add("oculto");
     guardar(KEY_VISTO, true);
     mostrar("invitacion");
   }
@@ -143,6 +160,12 @@
     if (video.duration) $("progreso").style.width = (video.currentTime / video.duration) * 100 + "%";
   });
   btnSaltar.addEventListener("click", terminarVideo);
+  $("btn-sonido").addEventListener("click", (e) => {
+    e.stopPropagation();
+    video.muted = false;
+    $("btn-sonido").classList.add("oculto");
+    video.play().catch(() => {});
+  });
 
   hacerDeslizable($("btn-abrir"), () => {
     document.querySelector(".sobre").classList.add("abierto");
