@@ -43,6 +43,52 @@
     Object.entries(pantallas).forEach(([k, el]) => el.classList.toggle("activa", k === nombre));
   }
 
+  // ---------- Botón deslizable ----------
+  // Hay que arrastrar el círculo hasta el final. Si solo se toca, el botón "rebota" para mostrar que se desliza.
+  function hacerDeslizable(btn, alCompletar) {
+    const pulgar = btn.querySelector(".slide-icono");
+    let inicioX = null, dx = 0, max = 0, movido = false;
+
+    const pintar = (x, animar) => {
+      pulgar.style.transition = animar ? "transform 0.3s ease" : "none";
+      pulgar.style.transform = `translateX(${x}px)`;
+      btn.style.setProperty("--avance", max ? x / max : 0);
+    };
+    btn.reiniciar = () => { btn.classList.remove("completo"); pintar(0, true); };
+
+    btn.addEventListener("pointerdown", (e) => {
+      if (btn.disabled || btn.classList.contains("completo")) return;
+      max = btn.clientWidth - pulgar.offsetWidth - 12;
+      inicioX = e.clientX; dx = 0; movido = false;
+      btn.setPointerCapture(e.pointerId);
+      btn.classList.add("arrastrando");
+    });
+    btn.addEventListener("pointermove", (e) => {
+      if (inicioX === null) return;
+      dx = Math.max(0, Math.min(max, e.clientX - inicioX));
+      if (dx > 4) movido = true;
+      pintar(dx, false);
+    });
+    const soltar = (e) => {
+      if (inicioX === null) return;
+      inicioX = null;
+      btn.classList.remove("arrastrando");
+      if (e.type === "pointerup" && dx >= max * 0.85) {
+        pintar(max, true);
+        btn.classList.add("completo");
+        alCompletar(); // se llama dentro del gesto, así el video puede sonar
+      } else {
+        pintar(0, true);
+        if (!movido) { btn.classList.remove("rebote"); void btn.offsetWidth; btn.classList.add("rebote"); }
+      }
+    };
+    btn.addEventListener("pointerup", soltar);
+    btn.addEventListener("pointercancel", soltar);
+    // Con teclado (Enter / espacio) también funciona
+    btn.addEventListener("click", (e) => { if (e.detail === 0 && !btn.disabled) alCompletar(); });
+    btn.addEventListener("animationend", () => btn.classList.remove("rebote"));
+  }
+
   // ---------- 1. Intro ----------
   $("intro-titulo").textContent = C.intro.titulo;
   if (!C.intro.titulo) $("intro-titulo").classList.add("oculto");
@@ -98,7 +144,7 @@
   });
   btnSaltar.addEventListener("click", terminarVideo);
 
-  $("btn-abrir").addEventListener("click", () => {
+  hacerDeslizable($("btn-abrir"), () => {
     document.querySelector(".sobre").classList.add("abierto");
     reproducirVideo();
   });
@@ -234,18 +280,23 @@
     borrar(KEY_RSVP);
     $("gracias").classList.add("oculto");
     form.classList.remove("oculto");
+    $("btn-enviar").reiniciar();
   });
 
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
+  // Enter en un campo no envía: hay que deslizar el botón
+  form.addEventListener("submit", (e) => e.preventDefault());
+  hacerDeslizable($("btn-enviar"), enviar);
+
+  async function enviar() {
+    const btn = $("btn-enviar");
     const error = $("form-error");
     error.classList.add("oculto");
 
     const datos = new FormData(form);
     const nombre = (datos.get("nombre") || "").trim();
     const asiste = datos.get("asiste");
-    if (!nombre) return mostrarError("Escribí tu nombre.");
-    if (!asiste) return mostrarError("Contame si venís o no.");
+    if (!nombre) { btn.reiniciar(); return mostrarError("Escribí tu nombre."); }
+    if (!asiste) { btn.reiniciar(); return mostrarError("Contame si venís o no."); }
 
     const registro = {
       nombre,
@@ -254,7 +305,6 @@
       mensaje: (datos.get("mensaje") || "").trim(),
     };
 
-    const btn = $("btn-enviar");
     const btnTexto = btn.querySelector(".slide-texto");
     btn.disabled = true;
     btnTexto.textContent = "Enviando…";
@@ -276,14 +326,15 @@
       mostrarError("No se pudo enviar. Revisá tu conexión y probá de nuevo.");
     } finally {
       btn.disabled = false;
-      btnTexto.textContent = "Confirmar";
+      btnTexto.textContent = "Deslizá para confirmar";
+      btn.reiniciar();
     }
 
     function mostrarError(msg) {
       error.textContent = msg;
       error.classList.remove("oculto");
     }
-  });
+  }
 
   // ---------- Arranque ----------
   const previa = leer(KEY_RSVP);

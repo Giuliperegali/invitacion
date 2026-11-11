@@ -4,14 +4,14 @@ PRODID:-//Invitacion Giuli//ES
 CALSCALE:GREGORIAN
 METHOD:PUBLISH
 BEGIN:VEVENT
-UID:20261123T003000Z-cumple-giuli@agusmarmol.github.io
+UID:20261123T003000Z-cumple-giuli@giuliperegali.github.io
 DTSTAMP:20261110T220000Z
 DTSTART:20261123T003000Z
 DTEND:20261123T053000Z
 SUMMARY:Mi cumpleaños · Giuli
 LOCATION:Pirovano 2253\, Ramos Mejía\, Buenos Aires
-DESCRIPTION:Cada uno traiga lo que quiera tomar 🍻\n\nSi traés invitados\, que lleguen después de las 00:30\n\nInvitación: https://agusmarmol.github.io/Invitacion-Cumplea-os/
-URL:https://agusmarmol.github.io/Invitacion-Cumplea-os/
+DESCRIPTION:Cada uno traiga lo que quiera tomar 🍻\n\nSi traés invitados\, que lleguen después de las 00:30\n\nInvitación: https://giuliperegali.github.io/invitacion/
+URL:https://giuliperegali.github.io/invitacion/
 BEGIN:VALARM
 TRIGGER:-P1D
 ACTION:DISPLAY

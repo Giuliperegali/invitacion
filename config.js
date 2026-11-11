@@ -9,7 +9,7 @@ const CONFIG = {
   intro: {
     titulo: "",                        // vacío = no se muestra
     subtitulo: "Subí el volumen 🔊",
-    boton: "Abrir para revolear",
+    boton: "Deslizá para revolear",
   },
 
   // --- Video ---
